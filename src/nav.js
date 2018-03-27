@@ -17,7 +17,7 @@ const Nav = ({ users }) => {
           ? users.map(user => {
               if (user.rating === Object.values(users[0])[2]) {
                 return (
-                  <NavLink key={user.id} to="/api/userForm">
+                  <NavLink key={user.id} to={`/api/users/${user.id}`}>
                     {" "}
                     {user.name},
                   </NavLink>
@@ -27,7 +27,7 @@ const Nav = ({ users }) => {
           : " "}
       </li>
       <li>
-        <NavLink to="/api/userForm">Create User </NavLink>
+        <NavLink to="/api/users/:id">Create User </NavLink>
       </li>
     </ul>
   );

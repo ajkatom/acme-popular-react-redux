@@ -10,7 +10,6 @@ const GET_USERS = "GET_USERS";
 const CREATE_USER = "CREATE_USER";
 const DELETE_USER = "DELETE_USER";
 const UPDATE_USER = "UPDATE_USER";
-
 const listUsers = () => {
   return dispatch => {
     return axios
@@ -34,8 +33,65 @@ const deleteUser = id => {
     });
   };
 };
+const createUser = user => {
+  return dispatch => {
+    return axios
+      .post("/api/users", user)
+      .then(res => res.data)
+      .then(userData => {
+        dispatch({
+          type: CREATE_USER,
+          userData
+        });
+      });
+  };
+};
+const updateUser = (user, id) => {
+  return dispatch => {
+    return axios
+      .put(`/api/users/${id}`, user)
+      .then(res => res.data)
+      .then(userData => {
+        dispatch({
+          type: UPDATE_USER,
+          userData
+        });
+      });
+  };
+};
+
+const incramentRating = user => {
+  user.rating++;
+  return dispatch => {
+    return axios
+      .put(`/api/users/${user.id}`, user)
+      .then(res => res.data)
+      .then(userData => {
+        dispatch({
+          type: UPDATE_USER,
+          userData
+        });
+      });
+  };
+};
+
+const decramentRating = user => {
+  user.rating--;
+  return dispatch => {
+    return axios
+      .put(`/api/users/${user.id}`, user)
+      .then(res => res.data)
+      .then(userData => {
+        dispatch({
+          type: UPDATE_USER,
+          userData
+        });
+      });
+  };
+};
 
 const userReducer = (state = initState, action) => {
+  const { users } = state;
   switch (action.type) {
     case GET_USERS:
       state = Object.assign({}, state, { users: action.users });
@@ -48,16 +104,31 @@ const userReducer = (state = initState, action) => {
         users: state.users.filter(user => user.id !== action.id * 1)
       });
       break;
-    // case CREATE_USER:
-    //   return Object.assign({}, state, { users: action.users });
-    //   break;
-    // case UPDATE_USER:
-    //   return Object.assign({}, state, { users: action.users });
-    //   break;
+    case CREATE_USER:
+      state = Object.assign({}, state, { users: [...users, action.userData] });
+      break;
+    case UPDATE_USER:
+      let index = users.findIndex(user => user.id === action.userData.id * 1);
+      state = Object.assign({}, state, {
+        users: [
+          ...users.slice(0, index),
+          action.userData,
+          ...users.slice(index + 1)
+        ]
+      });
+      break;
   }
   return state;
 };
+
 const store = createStore(userReducer, applyMiddleware(thunk));
 
 export default store;
-export { listUsers, deleteUser };
+export {
+  listUsers,
+  deleteUser,
+  createUser,
+  updateUser,
+  incramentRating,
+  decramentRating
+};
