@@ -34,7 +34,11 @@ class UserForm extends Component {
           <div>
             <h1>Create User</h1>
             <input defaultValue="" onChange={this.onChangeName} />
-            <input defaultValue="0" onChange={this.onChangeRating} />
+            <input
+              defaultValue="0"
+              type="number"
+              onChange={this.onChangeRating}
+            />
           </div>
         ) : users.length ? (
           users.map(user => {
@@ -50,6 +54,7 @@ class UserForm extends Component {
                   />
                   <input
                     defaultValue={user.rating}
+                    type="number"
                     onChange={this.onChangeRating}
                   />
                 </div>
