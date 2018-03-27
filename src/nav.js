@@ -15,7 +15,7 @@ const Nav = ({ users }) => {
       <li>
         Most Popular User is:{users.length
           ? users.map(user => {
-              if (user.rating === Object.values(users[0])[2]) {
+              if (Object.values(users[0])[2] <= user.rating) {
                 return (
                   <NavLink key={user.id} to={`/api/users/${user.id}`}>
                     {" "}
