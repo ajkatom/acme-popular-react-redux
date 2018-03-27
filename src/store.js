@@ -3,13 +3,15 @@ import thunk from "redux-thunk";
 import axios from "axios";
 
 const initState = {
-  users: []
+  users: [],
+  ers: ""
 };
 
 const GET_USERS = "GET_USERS";
 const CREATE_USER = "CREATE_USER";
 const DELETE_USER = "DELETE_USER";
 const UPDATE_USER = "UPDATE_USER";
+const ERROR_HANDELING = "ERROR_HANDELING";
 const listUsers = () => {
   return dispatch => {
     return axios
@@ -43,6 +45,16 @@ const createUser = user => {
           type: CREATE_USER,
           userData
         });
+      })
+      .catch(error => {
+        const { status } = error.response;
+
+        if (error.response) {
+          dispatch({
+            type: ERROR_HANDELING,
+            status
+          });
+        }
       });
   };
 };
@@ -56,6 +68,16 @@ const updateUser = (user, id) => {
           type: UPDATE_USER,
           userData
         });
+      })
+      .catch(error => {
+        const { status } = error.response;
+
+        if (error.response) {
+          dispatch({
+            type: ERROR_HANDELING,
+            status
+          });
+        }
       });
   };
 };
@@ -105,7 +127,10 @@ const userReducer = (state = initState, action) => {
       });
       break;
     case CREATE_USER:
-      state = Object.assign({}, state, { users: [...users, action.userData] });
+      state = Object.assign({}, state, {
+        users: [...users, action.userData],
+        ers: ""
+      });
       break;
     case UPDATE_USER:
       let index = users.findIndex(user => user.id === action.userData.id * 1);
@@ -114,8 +139,12 @@ const userReducer = (state = initState, action) => {
           ...users.slice(0, index),
           action.userData,
           ...users.slice(index + 1)
-        ]
+        ],
+        ers: ""
       });
+      break;
+    case ERROR_HANDELING:
+      state = Object.assign({}, state, { ers: action.status });
       break;
   }
   return state;
